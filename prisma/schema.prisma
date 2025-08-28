@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+  model Aluno {
+    id             Int    @id @default(autoincrement())
+    nome           String
+    email          String @unique
+    senha          String
+    treinos        Treino[]
+    pagamentos     Pagamento[]  
+  }
+
+model Instrutor{
+  id             Int    @id @default(autoincrement())
+  nome           String
+  email          String @unique
+  senha          String
+  treinos        Treino[]
+}
+
+model Treino{
+  id             Int   @id @default(autoincrement())
+  nome           String
+  descricao      String?
+  alunoId        Int
+  aluno          Aluno   @relation(fields: [alunoId], references: [id]) 
+  instrutorId    Int
+  instrutor      Instrutor @relation(fields: [instrutorId], references: [id])
+  exercicios     Exercicio[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Exercicio{
+  id            Int        @id @default(autoincrement())
+  nome          String
+  series        Int
+  repeticoes    Int
+  treinoId      Int
+  treino        Treino @relation(fields: [treinoId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Pagamento{
+  id            Int         @id @default(autoincrement())
+  valor         Float       
+  status        String //pendente, pago, cancelado
+  metodo        String //cartao, pix, dinheiro
+  alunoId       Int
+  aluno         Aluno @relation(fields: [alunoId], references: [id])
+  data          DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Admin{
+  id            Int       @id @default(autoincrement())
+  nome          String
+  email         String    @unique
+  senha         String  
+}
