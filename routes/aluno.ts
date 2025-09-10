@@ -24,7 +24,6 @@ router.get("/", async (req, res) => {
 })
 
 function validaSenha(senha: string){
-    
     const mensa: string[] = []
 
     if (senha.length < 8) {
@@ -35,32 +34,21 @@ function validaSenha(senha: string){
     let pequenas = 0 
     let numeros = 0
     let simbolos = 0
-    
+
+    // Conta os tipos de caracteres
     for (const letra of senha) {
-        if ((/[a-z]/).test(letra)){
-            pequenas++
-        }else if ((/[A-Z]/).test(letra)){
-            grandes++
-        }else if ((/[0-9]/).test(letra)){
-            numeros++
-        } else {
-            simbolos++
-        }
-
-        if (pequenas == 0) {
-            mensa.push("Erro... senha deve possuir letras minúsculuas")
-        }
-
-        if (grandes == 0) {
-            mensa.push("Erro... senha deve possuir pelo menos uma letra maiúscula")
-        }
-        if (numeros == 0) {
-            mensa.push("Erro... senha deve possuir pelo menos um número")
-        }
-        if (simbolos == 0) {
-            mensa.push("Erro... senha deve possuir pelo menos um simbolo")
-        }
+        if (/[a-z]/.test(letra)) pequenas++
+        else if (/[A-Z]/.test(letra)) grandes++
+        else if (/[0-9]/.test(letra)) numeros++
+        else simbolos++
     }
+
+    // Verifica depois do loop
+    if (pequenas === 0) mensa.push("Erro... senha deve possuir letras minúsculas")
+    if (grandes === 0) mensa.push("Erro... senha deve possuir pelo menos uma letra maiúscula")
+    if (numeros === 0) mensa.push("Erro... senha deve possuir pelo menos um número")
+    if (simbolos === 0) mensa.push("Erro... senha deve possuir pelo menos um símbolo")
+
     return mensa
 }
 
@@ -92,4 +80,4 @@ router.post("/", async (req, res) => {
     }
 })
 
-export default router
+export default router;

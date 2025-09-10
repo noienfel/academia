@@ -1,13 +1,12 @@
 import express from "express";
 import cors from "cors";
 
-// Import das rotas
 import routesAlunos from "./routes/aluno";
 import routesInstrutores from "./routes/instrutor"
 import routesTreinos from "./routes/treino";
 import routesExercicios from "./routes/exercicio";
-import routesAdmins from "./routes/admin";
-import routesLogin from "./routes/login"; // se você já tiver login implementado
+import routesAdmins from "./routes/admin";  
+import routesLogin from "./routes/login"; 
 
 const app = express();
 const port = 3000;
