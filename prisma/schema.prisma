@@ -51,8 +51,8 @@ model Exercicio{
 model Pagamento{
   id            Int         @id @default(autoincrement())
   valor         Float       
-  status        String //pendente, pago, cancelado
-  metodo        String //cartao, pix, dinheiro
+  status        Status //pendente, pago, cancelado
+  metodo        Metodo //cartao, pix, dinheiro
   alunoId       Int
   aluno         Aluno @relation(fields: [alunoId], references: [id])
   data          DateTime @default(now())
@@ -64,4 +64,15 @@ model Admin{
   nome          String
   email         String    @unique
   senha         String  
+}
+
+enum Status{
+  PENDENTE
+  PAGO
+  CANCELADO
+}
+enum Metodo{
+  CARTAO 
+  PIX   
+  DINHEIRO
 }
