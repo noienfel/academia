@@ -11,7 +11,7 @@ const exercicioSchema = z.object({
   }),
   series: z.number().min(1),
   repeticoes: z.number().min(1),
-  treinoId: z.number(),
+  treinoId: z.string().uuid(),
 });
 
 router.get("/", async (req, res) => {
@@ -31,7 +31,7 @@ router.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const exercicio = await prisma.exercicio.findUnique({
-      where: { id: Number(id) },
+      where: { id },
       include: { treino: true },
     });
 
@@ -72,7 +72,7 @@ router.put("/:id", async (req, res) => {
 
   try {
     const exercicio = await prisma.exercicio.update({
-      where: { id: Number(id) },
+      where: { id },
       data: valida.data,
     });
     res.status(200).json(exercicio);
@@ -86,7 +86,7 @@ router.delete("/:id", async (req, res) => {
 
   try {
     await prisma.exercicio.delete({
-      where: { id: Number(id) },
+      where: { id },
     });
     res.status(200).json({ mensagem: "Exercício deletado com sucesso" });
   } catch (error) {

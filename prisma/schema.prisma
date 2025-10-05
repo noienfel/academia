@@ -7,53 +7,56 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-  model Aluno {
-    id             Int    @id @default(autoincrement())
-    nome           String
-    email          String @unique
-    senha          String
-    treinos        Treino[]
-    pagamentos     Pagamento[]  
+model Aluno {
+  id             String      @db.VarChar(36) @id @default(uuid())
+  nome           String
+  email          String      @unique
+  senha          String
+  matriculado    Boolean     @default(false)
+  saldo          Decimal     @db.Decimal(9,2) @default(0)
+  treinos        Treino[]   
+  pagamentos     Pagamento[]  
+  depositos      Deposito[]
   }
 
 model Instrutor{
-  id             Int    @id @default(autoincrement())
+  id             String   @db.VarChar(36) @id @default(uuid())
   nome           String
-  email          String @unique
+  email          String   @unique
   senha          String
   treinos        Treino[]
 }
 
 model Treino{
-  id             Int   @id @default(autoincrement())
+  id             String       @db.VarChar(36) @id @default(uuid())
   nome           String
   descricao      String?
-  alunoId        Int
-  aluno          Aluno   @relation(fields: [alunoId], references: [id]) 
-  instrutorId    Int
-  instrutor      Instrutor @relation(fields: [instrutorId], references: [id])
+  alunoId        String
+  aluno          Aluno        @relation(fields: [alunoId], references: [id]) 
+  instrutorId    String
+  instrutor      Instrutor    @relation(fields: [instrutorId], references: [id])
   exercicios     Exercicio[]
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
 
 model Exercicio{
-  id            Int        @id @default(autoincrement())
+  id            String   @db.VarChar(36) @id @default(uuid())
   nome          String
   series        Int
   repeticoes    Int
-  treinoId      Int
-  treino        Treino @relation(fields: [treinoId], references: [id])
+  treinoId      String
+  treino        Treino   @relation(fields: [treinoId], references: [id])
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
 
 model Pagamento{
-  id            Int         @id @default(autoincrement())
+  id            String   @db.VarChar(36) @id @default(uuid())
   valor         Float       
   status        Status //pendente, pago, cancelado
   metodo        Metodo //cartao, pix, dinheiro
-  alunoId       Int
+  alunoId       String
   aluno         Aluno @relation(fields: [alunoId], references: [id])
   data          DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -65,6 +68,15 @@ model Admin{
   email         String    @unique
   senha         String  
 }
+
+model Deposito { 
+  id            String    @db.VarChar(36) @id @default(uuid())
+  alunoId       String 
+  metodo        Metodo
+  aluno         Aluno     @relation(fields: [alunoId], references: [id])
+  valor         Decimal   @db.Decimal(9, 2)
+}
+
 
 enum Status{
   PENDENTE

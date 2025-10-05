@@ -8,8 +8,8 @@ const router = Router();
 const treinoSchema = z.object({
   nome: z.string().min(3, { message: "Pelo menos 3 caracteres" }),
   descricao: z.string().nullable().optional(),
-  alunoId: z.number(),
-  instrutorId: z.number()
+  alunoId: z.string().uuid(),
+  instrutorId: z.string().uuid()
 });
 
 // GET todos os treinos
@@ -52,7 +52,7 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/:alunoId", async (req, res) => {
-  const alunoId = Number(req.params.alunoId);
+  const alunoId = req.params.alunoId;
 
   try {
     const treinos = await prisma.treino.findMany({
