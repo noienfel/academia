@@ -93,16 +93,6 @@ router.get("/:id", async (req, res) => {
       }
     });
 
-    const adminId = req.userLogadoId as string
-    const adminNome = req.userLogadoId as string
-   
-    const descricao = `Exclusão de: ${treinos}`
-    const complemento = `Admin: ${adminNome}`
-
-    const log = await prisma.log.create({
-      data: { descricao, complemento, adminId }
-    })   
-
     res.status(200).json(treinos);
   } catch (error) {
     console.error(error);
