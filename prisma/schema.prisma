@@ -17,15 +17,8 @@ model Aluno {
   treinos        Treino[]   
   pagamentos     Pagamento[]  
   depositos      Deposito[]
+   @@map("alunos")
   }
-
-model Instrutor{
-  id             String   @db.VarChar(36) @id @default(uuid())
-  nome           String
-  email          String   @unique
-  senha          String
-  treinos        Treino[]
-}
 
 model Treino{
   id             String       @db.VarChar(36) @id @default(uuid())
@@ -33,22 +26,30 @@ model Treino{
   descricao      String?
   alunoId        String
   aluno          Aluno        @relation(fields: [alunoId], references: [id]) 
-  instrutorId    String
-  instrutor      Instrutor    @relation(fields: [instrutorId], references: [id])
+  destaque       Boolean      @default(true)
   exercicios     Exercicio[]
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  admin         Admin?   @relation(fields: [adminId], references: [id])
+  adminId       String?  @db.VarChar(36)
+  ativo          Boolean      @default(true)
+
+
+  @@map("treinos")
 }
 
 model Exercicio{
   id            String   @db.VarChar(36) @id @default(uuid())
   nome          String
-  series        Int
+  series        Int 
   repeticoes    Int
   treinoId      String
   treino        Treino   @relation(fields: [treinoId], references: [id])
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  admin         Admin?   @relation(fields: [adminId], references: [id])
+  adminId       String?  @db.VarChar(36)
+   @@map("exercicios")
 }
 
 model Pagamento{
@@ -60,13 +61,33 @@ model Pagamento{
   aluno         Aluno @relation(fields: [alunoId], references: [id])
   data          DateTime @default(now())
   updatedAt     DateTime @updatedAt
+   @@map("pagamentos")
 }
 
-model Admin{
-  id            Int       @id @default(autoincrement())
-  nome          String
-  email         String    @unique
-  senha         String  
+model Admin{ 
+  id            String          @db.VarChar(36) @id @default(uuid())
+  nome          String          @db.VarChar(60) 
+  email         String          @db.VarChar(40)
+  senha         String          @db.VarChar(60)
+  nivel         Int             @db.SmallInt @default(2)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  logs          Log[]
+  exercicios    Exercicio[]
+  treinos       Treino[]
+  @@map("admins")
+}
+
+
+model Log {
+  id            Int         @id @default(autoincrement())
+  admin         Admin       @relation(fields: [adminId], references: [id])
+  adminId       String      @db.VarChar(36)
+  descricao     String      @db.VarChar(60)
+  complemento   String      @db.VarChar(200)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  @@map("logs")
 }
 
 model Deposito { 
@@ -75,6 +96,7 @@ model Deposito {
   metodo        Metodo
   aluno         Aluno     @relation(fields: [alunoId], references: [id])
   valor         Decimal   @db.Decimal(9, 2)
+   @@map("depositos")
 }
 
 
