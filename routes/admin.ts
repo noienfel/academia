@@ -15,9 +15,10 @@ const adminSchema = z.object({
   nivel: z.number()
     .min(1, { message: "Nível, no mínimo, 1" })
     .max(5, { message: "Nível, no máximo, 5" })
+    .optional()
 })
 
-router.get("/", async (req, res) => {
+router.get("/", verificaToken, async (req, res) => {
   try {
     const admins = await prisma.admin.findMany()
     res.status(200).json(admins)
@@ -79,6 +80,34 @@ function validaSenha(senha: string) {
   return mensa
 }
 
+// Rota temporária para criar primeiro admin (REMOVER EM PRODUÇÃO)
+router.post("/setup", async (req, res) => {
+  const valida = adminSchema.safeParse(req.body)
+  if (!valida.success) {
+    res.status(400).json({ erro: valida.error })
+    return
+  }
+
+  const erros = validaSenha(valida.data.senha)
+  if (erros.length > 0) {
+    res.status(400).json({ erro: erros.join("; ") })
+    return
+  }
+
+  const salt = bcrypt.genSaltSync(12)
+  const hash = bcrypt.hashSync(valida.data.senha, salt)
+  const { nome, email, nivel = 1 } = valida.data
+
+  try {
+    const admin = await prisma.admin.create({
+      data: { nome, email, senha: hash, nivel }
+    })
+    res.status(201).json(admin)
+  } catch (error) {
+    res.status(400).json(error)
+  }
+})
+
 router.post("/", verificaToken, async (req, res) => {
 
   const valida = adminSchema.safeParse(req.body)
@@ -112,7 +141,7 @@ router.post("/", verificaToken, async (req, res) => {
   }
 })
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", verificaToken, async (req, res) => {
   const { id } = req.params
   try {
     const admin = await prisma.admin.findFirst({

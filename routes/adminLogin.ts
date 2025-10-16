@@ -44,21 +44,20 @@ router.post ("/", async ( req, res) => {
             token
         })
         } else {
-      const descricao = "Tentativa de acesso ao sistema"
-      const complemento = "Admin: " + admin.id + " - " + admin.nome
+            const descricao = "Tentativa de acesso ao sistema"
+            const complemento = "Admin: " + admin.id + " - " + admin.nome
 
-      // registra um log de erro de senha
-      const log = await prisma.log.create({
-        data: { descricao, complemento, adminId: admin.id }
-      })
+            // registra um log de erro de senha
+            await prisma.log.create({
+                data: { descricao, complemento, adminId: admin.id }
+            })
 
-
-
-        res.status(400).json({ mensapadrao })
-    } 
-} catch (error) { 
-    res.status(400).json(error)
-}
+            res.status(400).json({ erro: mensapadrao })
+            return
+        }
+    } catch (error) {
+        res.status(400).json(error)
+    }
 })
 
 export default router 

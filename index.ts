@@ -11,6 +11,7 @@ import routesPagamentos from "./routes/pagamento"
 import routesDepositos from "./routes/deposito"
 import routesDashboard from './routes/dashboard'
 import routesAdminLogin from './routes/adminLogin'
+import { verificaToken } from './middlewares/verificaToken'
 
 
 const app = express();
@@ -19,22 +20,27 @@ const port = 3000;
 app.use(express.json());
 app.use(cors());
 
+app.use("/admins/login", routesAdminLogin)
+app.use("/alunos/login", routesLogin)
+app.use("/admins", routesAdmins)
 app.use("/alunos", routesAlunos)
 app.use("/treinos", routesTreinos)
 app.use("/exercicios", routesExercicios)
-app.use("/admins", routesAdmins)
-app.use("/alunos/login", routesLogin)
-app.use("/instrutores/login", routesLogin)
 app.use("/pagamentos", routesPagamentos)
 app.use("/depositos", routesDepositos)
 app.use("/dashboard", routesDashboard)
-app.use("/admins/login", routesAdminLogin)
 
 
 app.get("/", (req, res) => {
   res.send("API: Sistema de Treinos Academia ");
 });
 
-app.listen(port, () => {
-  console.log(`Servidor rodando na porta: ${port}`);
-});
+// Para desenvolvimento local
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(port, () => {
+    console.log(`Servidor rodando na porta: ${port}`);
+  });
+}
+
+// Exportar para Vercel
+export default app;

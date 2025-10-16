@@ -38,7 +38,7 @@ router.post("/", async(req, res) => {
 
     const dadoAluno = await prisma.aluno.findUnique({
         where: { id: alunoId }
-      })
+      })    
     
 
     if(!dadoAluno){ 
